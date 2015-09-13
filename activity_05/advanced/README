@@ -1,0 +1,11 @@
+Description:
+This is a very simple demo for running a Python-based web app using the
+Flask microframework.
+
+Requirements:
+On systems where pip is available you'll need to run:
+
+sudo pip install flask
+
+Running:
+python run.py
