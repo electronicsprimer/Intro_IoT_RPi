@@ -1,4 +1,4 @@
-"""
+'''
   09/01/2015
   Author: Makerbro
   Platforms: Raspberry Pi (Raspbian)
@@ -18,7 +18,7 @@
   Beerware License; if you find the code useful, and we happen to cross 
   paths, you're encouraged to buy us a beer. The code is distributed hoping
   that you in fact find it useful, but  without warranty of any kind.
-"""
+'''
 from flask import Flask         # Import the Flask class from the flask module
 
 app = Flask(__name__)           # Instantiate a Flask object

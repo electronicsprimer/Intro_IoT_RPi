@@ -24,33 +24,53 @@ import RPi.GPIO as GPIO                 # Import GPIO library
 import time                             # Import time library for sleep delay
 
 led_pin = 7                             # Pin number for LED
+led_status = "OFF"
 GPIO.setmode(GPIO.BOARD)
 GPIO.setup(led_pin, GPIO.OUT)
+GPIO.output(led_pin,False)
 
 # -----------------------------------------------------------------------------
 # API
 # -----------------------------------------------------------------------------
 # Use the route() decorator to tell Flask what URL should trigger our function
-from flask import Flask, render_template 
+from flask import Flask, render_template, request, g
+import json, datetime
+
 app = Flask(__name__)                       # Instantiate a Flask object
 @app.route('/')                 
 def index():              
     templateData = {
-        'title' : 'Welcome to the web-led control center',
-        'usage' : 'API can be accessed via "http://host/on"'
+        'title' : 'Welcome to the web-led control center'
     }
     return render_template('main.html', **templateData)
 
 @app.route('/on', methods=['GET'])
 def rpi_on():
-    GPIO.output(led_pin,True)   # Turn on GPIO pin "led_pin"
-    # On a GET request the HTTP server must return something. The HTTP 
-    # 'empty response' response is 204 No Content.
+    global led_status 
+    led_status = "ON"
+    GPIO.output(led_pin,True)
     return ('', 204)
  
 @app.route('/off', methods=['GET'])
 def rpi_off():
-    GPIO.output(led_pin,False)  # Turn on GPIO pin "led_pin"
+    global led_status 
+    led_status = "OFF"
+    GPIO.output(led_pin,False)
+    return ('', 204)
+
+# GET request to retrieve LED status
+@app.route('/status', methods=['GET'])
+def get_status():
+    return json.dumps(led_status)
+
+# POST request to set the LED status
+@app.route('/status', methods=['POST'])
+def post_status():
+    req = request.get_json()
+    if(req['status']):
+      rpi_on()
+    elif(not req['status']):
+      rpi_off()
     return ('', 204)
 
 # use the run() function to run the local server with our application

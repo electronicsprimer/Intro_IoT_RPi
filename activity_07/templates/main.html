@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <title>ACROBOTIC | IoT Button</title>
+    <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css">
+  </head>
+  <body>
+    <div class="container">
+      <div class="col-lg-4 col-lg-offset-4">
+        <div class="panel panel-default">
+          <div class="panel-heading">
+            <h3 class="panel-title">IoT Button</h3>
+          </div>
+          <div class="panel-body text-center">
+            <button type="button" class="btn btn-info btn-lg">
+              <span class="glyphicon glyphicon-flash" aria-hidden="true"></span>
+              Blink!
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+    <script src="//code.jquery.com/jquery-1.11.2.min.js"></script>
+
+    <script type="text/javascript">          
+      // Using AJAX requests to avoid refresing the page
+      // We encode the data (0 for OFF, 1 for ON) in JSON format
+      function setLedStatus(stat) {
+        $.ajax({
+          url: '/status',
+          dataType: 'json',
+          type: 'post',
+          contentType: 'application/json',
+          data: JSON.stringify( stat ),
+          processData: false
+        });
+      }
+      // We associate an anonymous function with the 'click' event
+      // of the button in the page
+      $('.btn').on('click',function(){
+        var getLedStatus = $.ajax({
+            url: '/status',
+            dataType: 'json',
+            type: 'get',
+            contentType: 'text/javascript'
+        });
+        // When we're done retrieving the current status of the LED
+        // we toggle it by calling the setLedStatus function
+        getLedStatus.done(function(data){
+          console.log(data);
+          if(data=="ON")
+            setLedStatus({"status":0});
+          else if(data=="OFF")
+            setLedStatus({"status":1});
+        });
+      });
+    </script>          
+  </body>
+</html>

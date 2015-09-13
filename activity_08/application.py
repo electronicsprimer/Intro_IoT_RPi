@@ -20,44 +20,55 @@
 # -----------------------------------------------------------------------------
 # GPIO
 # -----------------------------------------------------------------------------
-import RPi.GPIO as GPIO                 # Import GPIO library
-import time                             # Import time library for sleep delay
-
-led_pin = 7                             # Pin number for LED
-GPIO.setmode(GPIO.BOARD)
-GPIO.setup(led_pin, GPIO.OUT)
+from alarm import Alarm
 
 # -----------------------------------------------------------------------------
 # API
 # -----------------------------------------------------------------------------
 # Use the route() decorator to tell Flask what URL should trigger our function
-from flask import Flask, render_template 
+from flask import Flask, render_template, request, g
+import json, datetime
+
 app = Flask(__name__)                       # Instantiate a Flask object
+alarm = Alarm(trig_pin=13,echo_pin=15)
+active = False
+
 @app.route('/')                 
 def index():              
     templateData = {
-        'title' : 'Welcome to the web-led control center',
-        'usage' : 'API can be accessed via "http://host/on"'
+        'title' : 'Welcome to the web-led control center'
     }
     return render_template('main.html', **templateData)
 
-@app.route('/on', methods=['GET'])
-def rpi_on():
-    GPIO.output(led_pin,True)   # Turn on GPIO pin "led_pin"
-    # On a GET request the HTTP server must return something. The HTTP 
-    # 'empty response' response is 204 No Content.
-    return ('', 204)
- 
-@app.route('/off', methods=['GET'])
-def rpi_off():
-    GPIO.output(led_pin,False)  # Turn on GPIO pin "led_pin"
+# GET request to retrieve LED status
+@app.route('/status', methods=['GET'])
+def get_status():
+    global active
+    global alarm
+    if not active:
+        return json.dumps({'status':-1})
+    status = False
+    distance = alarm.range_cm()
+    if distance is not None:
+        if distance < 10:
+            alarm.capture_img()
+            alarm.blink_led()
+            alarm.play_sound()
+            status = True
+    return json.dumps({'status':status})
+
+# POST request to set the LED status
+@app.route('/activate', methods=['POST'])
+def post_status():
+    global active
+    req = request.get_json()
+    print req
+    if(req['status']):
+      active = True
+    elif(not req['status']):
+      active = False
     return ('', 204)
 
 # use the run() function to run the local server with our application
 if __name__ == '__main__':
-    try: 
-        app.run(host='0.0.0.0',debug=True)      # Accessible from the outside world
-    except KeyboardInterrupt:  
-        print "Quiting..."  
-    finally:  
-        GPIO.cleanup() # this ensures a clean exit   
+    app.run(host='0.0.0.0',debug=True)      # Accessible from the outside world
