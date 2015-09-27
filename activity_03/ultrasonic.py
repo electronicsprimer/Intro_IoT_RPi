@@ -73,7 +73,7 @@ if __name__ == "__main__":
             sys.exit(0)
         signal.signal(signal.SIGINT, signal_handler)
 
-        ultrasonic = Ultrasonic(trig_pin=13,echo_pin=15)
+        ultrasonic = Ultrasonic(trig_pin=15,echo_pin=13)
 
         while True:
             distance = ultrasonic.range_cm()
