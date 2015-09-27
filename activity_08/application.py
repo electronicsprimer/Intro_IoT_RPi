@@ -30,7 +30,7 @@ from flask import Flask, render_template, request, g
 import json, datetime
 
 app = Flask(__name__)                       # Instantiate a Flask object
-alarm = Alarm(trig_pin=13,echo_pin=15)
+alarm = Alarm(trig_pin=15,echo_pin=13)
 active = False
 
 @app.route('/')                 
