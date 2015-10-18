@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <title>ACROBOTIC | IoT Application</title>
+    <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css">
+  </head>
+  <body>
+    <div class="container">
+      <div class="col-lg-10 col-lg-offset-1">
+        <div class="panel panel-default">
+          <div class="panel-heading">
+            <h3 class="panel-title">ACROBOTIC | IoT Alarm System</h3>
+          </div>
+          <div class="panel-body text-center">
+            <button type="button" class="btn btn-info btn-lg">
+              <span class="glyphicon glyphicon-flash" aria-hidden="true"></span>
+              Start
+            </button>
+          </div>
+          <div id="latest-img" class="panel-body text-center">
+            <img />
+          </div>
+        </div>
+      </div>
+    </div>
+    <script src="//code.jquery.com/jquery-1.11.2.min.js"></script>
+
+    <script type="text/javascript">          
+      var active = false;
+
+      // Using AJAX requests to avoid refresing the page
+      function setActiveStatus(stat) {
+        $.ajax({
+          url: '/activate',
+          dataType: 'json',
+          type: 'post',
+          contentType: 'application/json',
+          data: JSON.stringify( stat ),
+          processData: false
+        });
+      }
+
+      $( document ).ready(function(){
+        $('.btn').on('click',function(){
+          active = !active;
+          setActiveStatus({"status":active});
+          if(active)
+            $('.btn').html(
+              '<span class=\"glyphicon glyphicon-flash\" aria-hidden=\"true\"></span> Stop'
+            );
+          else if(!active)
+            $('.btn').html(
+              '<span class=\"glyphicon glyphicon-flash\" aria-hidden=\"true\"></span> Start'
+            );
+        });
+
+        setInterval(function(){
+          var req = $.ajax({
+              url: '/status',
+              dataType: 'json',
+              type: 'get',
+              contentType: 'text/javascript'
+          });
+          req.done(function(data){
+              console.log(data['status'])
+              if(data['status']==1)
+                $('#latest-img').html(
+                  '<img src="{{url_for('static',filename='snapshot.jpg')}}" />'
+                );
+          })
+        },
+        1000);
+      });
+    </script>          
+  </body>
+</html>
