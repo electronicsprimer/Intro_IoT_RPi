@@ -95,7 +95,7 @@ class Alarm(object):
 
     def capture_img(self):
         path = os.path.join(self.output_dir,"snapshot.jpg")
-        p = subprocess.Popen(["fswebcam","-r","640x480","-d",self.dev,"-q",path],
+        p = subprocess.Popen(["raspistill","-o",path],
                              stderr=subprocess.STDOUT,
                              stdout=subprocess.PIPE)
         p.wait()

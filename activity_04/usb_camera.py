@@ -41,7 +41,7 @@ if not os.path.exists(output_dir):
 try:
     path = os.path.join(output_dir,"%m-%d-%y-%H%M.jpg")
     # run the command
-    # fswebcam -r 640x480 -d /dev/video0 -q /path/to/picture/files
+    # fswebcam -r 640x480 -d /dev/video0 -q ./picture.jpg
     #
     p = subprocess.Popen(["fswebcam","-r","640x480","-d",dev,"-q",path],
                          stderr=subprocess.STDOUT,

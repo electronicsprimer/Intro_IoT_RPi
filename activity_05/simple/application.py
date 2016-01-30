@@ -27,7 +27,15 @@ app = Flask(__name__)           # Instantiate a Flask object
 @app.route('/')                 
 # The function is given a name which is also used to generate URLs 
 def hello_world():              
-    return 'Hello World!'
+    return '<h1>Hello World!</h1>'
+
+@app.route('/testurl')                 
+# The function is given a name which is also used to generate URLs 
+def hello_cisco():              
+    return '<h3>Hello Cisco!</h3>'
+
+
+
 # use the run() function to run the local server with our application
 if __name__ == '__main__':
 #    app.run()                  # Only accessible from this machine
