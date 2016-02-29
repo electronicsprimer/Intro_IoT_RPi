@@ -61,15 +61,15 @@ def rpi_off():
 # GET request to retrieve LED status
 @app.route('/status', methods=['GET'])
 def get_status():
-    return json.dumps("HELLO JAVASCRIPT")
+    return json.dumps(led_status)
 
 # POST request to set the LED status
 @app.route('/status', methods=['POST'])
 def post_status():
     req = request.get_json()
-    if(req['latigers']>2):
+    if(req['status']>0):
       rpi_on()
-    elif(not req['latigers']):
+    elif(not req['status']):
       rpi_off()
     return ('', 204)
 
